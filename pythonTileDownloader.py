@@ -11,13 +11,13 @@ import os
 
 #################### VARIBALES
 
-NW = {"lat" : , "long" : }
+NW = {"lat" : , "long" : } 
 SE = {"lat" : , "long" : }
 ZOOM = []
 URL = ""
 
 
-fileFormat = ".png"
+fileFormat = ".png" 
 nbDL = 0
 normalizedUrl = ""
 
@@ -58,9 +58,7 @@ def getTileNum(NW, SE, zoom):
 
 def downloadTiles(NW, SE, zoom):
     global URL
-
-    normalizedUrl = normalizeUrl(URL)
-    
+	
     tileNum = getTileNum(NW, SE, zoom)
     nbFiles = (tileNum[1][0] - tileNum[0][0] +1) * (tileNum[1][1] - tileNum[0][1] +1)
     
@@ -70,7 +68,7 @@ def downloadTiles(NW, SE, zoom):
     for x in range(tileNum[0][0], tileNum[1][0]+1, 1):
         createDownloadDirecotryOrSwitch(str(x))
         for y in range(tileNum[0][1], tileNum[1][1]+1, 1):
-            url = getDownloadUrl(normalizedUrl, x, y, zoom) 
+            url = getDownloadUrl(URL, x, y, zoom) 
             downloadFile(url, x, y, zoom)
         os.chdir(os.pardir)
     os.chdir(os.pardir)
@@ -84,42 +82,12 @@ def multipleZoomTileDownload(NW, SE, zoom):
         print("\n" + str(z) + " zoom completed\n")
     print("Download completed")
 
-def normalizeUrl(url):
-    normalizedUrl = []
-    order = []
+def getDownloadUrl(url, x, y, z):
+  url = url.replace("[x]", str(x)) 
+  url = url.replace("[y]", str(y)) 
+  url = url.replace("[z]", str(z)) 
 
-    tmp = url.split("[", 1)
-    
-    while True:
-        if (len(tmp) > 1):
-            if (tmp[0][1] == "]"):
-                normalizedUrl.append(tmp[0][2:])
-            else:
-                normalizedUrl.append(tmp[0])
-            order.append(tmp[1][0])
-        else:
-            break
-        tmp = tmp[1].split("[", 1)
-    
-    return { "normalizedUrl" : normalizedUrl, "order" : order }
-
-def getDownloadUrl(normalizedUrl, x, y, z):
-    url = ""
-    url += normalizedUrl["normalizedUrl"][0]
-    j = 1
-    for i in normalizedUrl["order"]:
-        if i == "x":
-            url += str(x)
-        elif i == "y":
-            url += str(y)
-        elif i == "z":
-            url += str(z)
-
-        if j < len(normalizedUrl["normalizedUrl"]):
-            url += normalizedUrl["normalizedUrl"][j]
-            j += 1
-
-    return url
+  return (url)
 
 #################### MAIN
 
