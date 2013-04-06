@@ -57,7 +57,7 @@ def downloadFile(url, x, y, z):
         nbDL += 1
       except urllib2.URLError, e:
         print("/" + str(z) + "/" + str(x) + "/" + str(y) + fileFormat + "\t" + str(e))
-        errorUrl += url
+        errorUrl.append(url)
         
 
 def getTileNum(NW, SE, zoom):
