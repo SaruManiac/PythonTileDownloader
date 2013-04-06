@@ -11,7 +11,7 @@ import os
 
 #################### VARIBALES
 
-NW = {"lat" : , "long" : } 
+NW = {"lat" : , "long" : }
 SE = {"lat" : , "long" : }
 ZOOM = []
 URL = ""
@@ -19,6 +19,7 @@ URL = ""
 
 fileFormat = ".png" 
 nbDL = 0
+errorUrl = []
 normalizedUrl = ""
 
 #################### FUNCTIONS
@@ -42,16 +43,22 @@ def isTheFileExists(fileName):
 
 def downloadFile(url, x, y, z):
     global nbDL
+    global errorUrl
     
     if isTheFileExists(str(y) + fileFormat):
         print("/" + str(z) + "/" + str(x) + "/" + str(y) + fileFormat + "\t File already exists")
     else:
+      try:
         response = urllib2.urlopen(url)
         localFile = open(str(y) + fileFormat, 'wb')
         localFile.write(response.read())
         localFile.close()
         print("/" + str(z) + "/" + str(x) + "/" + str(y) + fileFormat + "\t File downloaded")
         nbDL += 1
+      except urllib2.URLError, e:
+        print("/" + str(z) + "/" + str(x) + "/" + str(y) + fileFormat + "\t" + str(e))
+        errorUrl += url
+        
 
 def getTileNum(NW, SE, zoom):
     return [deg2num(NW["lat"], NW["long"], zoom), deg2num(SE["lat"], SE["long"], zoom)]
