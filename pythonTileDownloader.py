@@ -1,28 +1,31 @@
 # Python tile downloader
+# (https://github.com/SaruManiac/PythonTileDownloader)
 #
-# Download tiles images from an online tile server
+# Download tiles images from online tile server
 #
+# author          : SaruManiac
+# python_version  : 2.7.3 
+#============================================================
 
-#################### IMPORTS
+############################## IMPORTS
 
 import math
 import urllib2
 import os
 
-#################### VARIBALES
+############################## VARIBALES
 
-NW = {"lat" : , "long" : }
-SE = {"lat" : , "long" : }
+NW = {"lat" : 0, "long" : 0}
+SE = {"lat" : 0, "long" : 0}
 ZOOM = []
 URL = ""
 
-
+# Do not modify following variables
 fileFormat = ".png" 
 nbDL = 0
 errorUrl = []
-normalizedUrl = ""
 
-#################### FUNCTIONS
+############################## FUNCTIONS
 
 def deg2num(lat_deg, lon_deg, zoom):
   lat_rad = math.radians(lat_deg)
@@ -46,7 +49,7 @@ def downloadFile(url, x, y, z):
     global errorUrl
     
     if isTheFileExists(str(y) + fileFormat):
-        print("/" + str(z) + "/" + str(x) + "/" + str(y) + fileFormat + "\t File already exists")
+        print("/" + str(z) + "/" + str(x) + "/" + str(y) + fileFormat + "\t\t File already exists")
     else:
       try:
         response = urllib2.urlopen(url)
@@ -82,7 +85,6 @@ def downloadTiles(NW, SE, zoom):
     os.chdir(os.pardir)
 
 def multipleZoomTileDownload(NW, SE, zoom):
-
     for z in zoom:
         print("Start zoom " + str(z) + "\n")
         downloadTiles(NW, SE, z)
@@ -96,7 +98,26 @@ def getDownloadUrl(url, x, y, z):
 
   return (url)
 
-#################### MAIN
+def checkSettings(NW, SE, URL, ZOOM):
+  if (NW["lat"] == 0 or NW["long"] == 0):
+    print("Invalid NW point : complete gps coordinates")
+  if (SE["lat"] == 0 or SE["long"] == 0):
+    print("Invalid SE point : complete gps coordinates")
+  if (ZOOM == []):
+    print("Invalide Zoom option : complete zoom option")
+  if (URL == ""):
+    print("Invalide URL : complete tile server url")
+  if (NW["lat"] < SE["lat"] or NW["long"] > SE["long"]):
+    print("Invalide points : check the gps coordinates of the two points")
+
+  if (NW["lat"] != 0 and NW["long"] != 0 and SE["lat"] != 0 and SE["long"] != 0 and ZOOM != [] and URL != "" and NW["lat"] >= SE["lat"] and NW["long"] <= SE["long"]):
+    return True
+  else:
+    return False
+  
+
+############################## MAIN
 
 if (__name__ == "__main__"):
+  if checkSettings(NW, SE, URL, ZOOM):
     multipleZoomTileDownload(NW, SE, ZOOM)
